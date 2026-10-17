@@ -22,7 +22,7 @@
    ===================================================================== */
 
 const ABOUT = {
-  name: "Preston",
+  name: "Preston Chen",
 
   // Big statement on the About page. One line per entry.
   statement: [
@@ -30,20 +30,19 @@ const ABOUT = {
     "is a student",
     "engineer in Taiwan",
     "building hardware",
-    "and design projects.",
+    "and designing projects.",
   ],
 
   // Short paragraphs under the statement.
   bio: [
     "I design, prototype and test my own hardware: wearables, robots and medical devices. Most of it starts in CAD, gets 3D printed, and goes through a lot of versions before it works.",
-    "Edit this text in content.js.",
   ],
 
   // Contact / social links. Delete any you don't want.
   links: [
-    { label: "Email", href: "mailto:you@example.com" },
+    { label: "Email", href: "prestonc988@gmail.com" },
     { label: "GitHub", href: "https://github.com/" },
-    { label: "Instagram", href: "https://instagram.com/" },
+    { label: "Instagram", href: "https://www.instagram.com/prestonc_988/" },
   ],
 };
 
@@ -55,7 +54,7 @@ const PROJECTS = [
     year: "2026",
     tags: ["Raspberry Pi Zero 2 W", "Camera Module 3", "OCR", "TTS"],
     summary:
-      "An affordable clip-on wearable that reads printed text out loud. A Raspberry Pi Zero 2 W and Camera Module 3 capture the page, and a custom button HAT controls it.",
+      "An cheap assistive pointer that reads printed text out loud. A Raspberry Pi Zero 2 W and Camera Module 3 capture the page, and a custom button HAT controls it.",
     images: [],
     links: [],
   },
