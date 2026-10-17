@@ -48,6 +48,17 @@ const ABOUT = {
 };
 
 const PROJECTS = [
+  
+  {
+    slug: "ai-reader",
+    title: "Assistive Reading Device",
+    year: "2026",
+    tags: ["Raspberry Pi Zero 2 W", "Camera Module 3", "OCR", "TTS"],
+    summary:
+      "An affordable clip-on wearable that reads printed text out loud. A Raspberry Pi Zero 2 W and Camera Module 3 capture the page, and a custom button HAT controls it.",
+    images: [],
+    links: [],
+  },
   {
     slug: "adaptive-insole",
     title: "Adaptive Insole",
@@ -59,16 +70,6 @@ const PROJECTS = [
       // { src: "prototype-1.jpg", caption: "Four-zone static insole, printed in TPU" },
       // { src: "pod-demo.jpg", caption: "Servo-driven single-pod demonstrator" },
     ],
-    links: [],
-  },
-  {
-    slug: "assistive-reading-device",
-    title: "Assistive Reading Device",
-    year: "2026",
-    tags: ["Raspberry Pi Zero 2 W", "Camera Module 3", "OCR", "TTS"],
-    summary:
-      "An affordable clip-on wearable that reads printed text out loud. A Raspberry Pi Zero 2 W and Camera Module 3 capture the page, and a custom button HAT controls it.",
-    images: [],
     links: [],
   },
   {
