@@ -168,7 +168,7 @@
     const goTo = (i) => { target = clamp(i, 0, n - 1) * step; };
 
     function frame() {
-      current += (target - current) * (reduceMotion ? 1 : 0.12);
+      current += (target - current) * (reduceMotion ? 1 : 0.1);
       if (Math.abs(target - current) < 0.1) current = target;
       track.style.transform = `translate3d(${-current}px,0,0)`;
 
@@ -191,13 +191,36 @@
       raf = requestAnimationFrame(frame);
     }
 
-    // Mouse wheel / trackpad: vertical scroll moves sideways
+    // Mouse wheel / trackpad: one small flick = one project.
+    // The first nudge in a gesture moves exactly one slide, then the rest of
+    // that gesture (trackpad momentum, extra wheel clicks) is ignored until
+    // scrolling goes quiet or a fresh, stronger flick starts.
+    const WHEEL_THRESHOLD = 6;   // px of scroll needed to trigger (lower = more sensitive)
+    const QUIET_MS = 140;        // silence that ends a gesture
+    const MIN_LOCK_MS = 380;     // shortest time between two jumps
+    let wheelAcc = 0, wheelLocked = false, lockAt = 0, lastMag = 0, quietTimer = 0;
     function onWheel(e) {
       e.preventDefault();
-      const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      target = clamp(target + d * (e.deltaMode === 1 ? 32 : 1), 0, max);
-      clearTimeout(snapTimer);
-      snapTimer = setTimeout(snap, 180);
+      const raw = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      const d = raw * (e.deltaMode === 1 ? 32 : 1);
+      const mag = Math.abs(d);
+      const now = performance.now();
+
+      clearTimeout(quietTimer);
+      quietTimer = setTimeout(() => { wheelLocked = false; wheelAcc = 0; lastMag = 0; }, QUIET_MS);
+
+      // During momentum the deltas keep shrinking; a sudden bigger delta = new flick
+      if (wheelLocked && now - lockAt > MIN_LOCK_MS && mag > lastMag * 1.6 && mag > 10) wheelLocked = false;
+      lastMag = mag;
+      if (wheelLocked) return;
+
+      wheelAcc += d;
+      if (Math.abs(wheelAcc) >= WHEEL_THRESHOLD) {
+        goTo(active + Math.sign(wheelAcc));
+        wheelAcc = 0;
+        wheelLocked = true;
+        lockAt = now;
+      }
     }
 
     // Drag (mouse + touch)
@@ -218,12 +241,16 @@
       vel = (e.clientX - lastX) / Math.max(1, now - lastT);
       lastX = e.clientX; lastT = now;
     }
-    function onUp() {
+    function onUp(e) {
       if (!dragging) return;
       dragging = false;
       slider.classList.remove("dragging");
-      target = clamp(target - vel * 260, 0, max);  // fling
-      snap();
+      // A short swipe or quick flick moves one project, never more
+      const dx = (e && e.clientX !== undefined ? e.clientX : lastX) - startX;
+      const from = Math.round(startTarget / step);
+      if (dx < -40 || vel < -0.3) goTo(from + 1);
+      else if (dx > 40 || vel > 0.3) goTo(from - 1);
+      else goTo(from);
     }
     // A drag should not count as a click on the card
     function onClick(e) {
@@ -258,6 +285,7 @@
     cleanup = () => {
       cancelAnimationFrame(raf);
       clearTimeout(snapTimer);
+      clearTimeout(quietTimer);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
